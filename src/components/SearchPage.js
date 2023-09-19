@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import styles from "../styles/search-page.modules.css";
 
-export default function SearchPage({ popular }) {
+export default function SearchPage({ popular,  handleSelectionChange }) {
+
   return (
     <div>
       <h1>Reddit Client</h1>
@@ -17,13 +19,13 @@ export default function SearchPage({ popular }) {
       </form>
       <h2>Popular Topics</h2>
       {/* Popular Reddit Topics listed below */}
-      <div>
+      <div className="topics">
         {/* Maps through popular topics from props */}
-        {popular.map((topic) => {
+        {popular.map((topic, key) => {
           return (
-            <div>
-              <Link to={`${topic.data.permalink}`}>
-                <h3 key={topic.data.id}>{topic.data.title}</h3>
+            <div key={key} className="topic-card">
+              <Link to={`/r/${topic.data.subreddit}/${topic.data.title}`}>
+                <h3 onClick={() => handleSelectionChange(topic.data.id)} id={topic.data.id}>{topic.data.title}</h3>
               </Link>
             </div>
           );

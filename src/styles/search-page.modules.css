@@ -1,0 +1,13 @@
+
+.topics {
+    width: 100vw;
+    height: 60vh;
+    overflow-y: scroll;
+}
+
+.topic-card {
+    width: 20%;
+    height: fit-content;
+    display: inline-block;
+    margin: 1%;
+}

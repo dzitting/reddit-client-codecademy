@@ -1,4 +1,4 @@
-export const popularContents = async () => {
+export const fetchPopularContents = async () => {
     const getTopics = async () => {
         try {
             const response = await fetch('https://www.reddit.com/r/popular.json');
