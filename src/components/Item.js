@@ -4,7 +4,7 @@ import { useParams, Link, Outlet } from "react-router-dom";
 import CommentSection from "./CommentSection";
 import styles from "../styles/item.modules.css";
 
-function Item({ selected, info, fetchInfo, popular, handleSelectionChange, comments }) {
+function Item({ selected, info, fetchInfo, popular, handleSelectionChange, comments, handleSubmit, newCommentValue, commentValueChange }) {
   const { title } = useParams();
   const { subreddit } = useParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +63,7 @@ function Item({ selected, info, fetchInfo, popular, handleSelectionChange, comme
           </div>
           {showingComments && (
             <div>
-              <CommentSection info={info} comments={comments}/>
+              <CommentSection info={info} comments={comments} popular={popular} newComment={handleSubmit} newCommentValue={newCommentValue} commentValueChange={commentValueChange}/>
             </div>
           )}
         </div>

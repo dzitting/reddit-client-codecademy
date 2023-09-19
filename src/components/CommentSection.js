@@ -1,20 +1,44 @@
 import React, { useState } from "react";
 import styles from "../styles/comments.modules.css";
 
-function CommentSection({ info, comments }) {
-  const [openReplies, setOpenReplies] = useState(false);
+function CommentSection({ info, comments, popular, newComment, newCommentValue, commentValueChange }) {
+  const [openReplies, setOpenReplies] = useState(
+    Array.from({ length: comments.length }, () => false)
+  );
   const [targetElement, setTargetElement] = useState(null);
+  const [isLoading, setIsLoading] = useState(
+    Array.from({ length: comments.length }, () => false)
+  );
 
-  const handleReplies = () => {
-    setOpenReplies(!openReplies);
+  const handleReplyButtonClick = (event, comment) => {
+    event.preventDefault();
+    setTargetElement(comment);
   };
 
-  const handleReplyButtonClick = (event) => {
-    const clickedElement = event.target;
-    setTargetElement(clickedElement);
+  const handleReplies = (index) => {
+    setOpenReplies((prevState) => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      return newState;
+    });
+
+    // Set loading to true when opening replies
+    setIsLoading((prevState) => {
+      const newState = [...prevState];
+      newState[index] = true;
+      return newState;
+    });
+
+    // Simulate loading for a few seconds (you can replace this with actual API calls)
+    setTimeout(() => {
+      setIsLoading((prevState) => {
+        const newState = [...prevState];
+        newState[index] = false; // Set loading back to false when done
+        return newState;
+      });
+    }, 2000); // Simulating a 2-second loading delay
   };
 
-  console.log(comments);
   return comments ? (
     <div className="comment-container">
       <h2>Comments</h2>
@@ -33,7 +57,7 @@ function CommentSection({ info, comments }) {
             }}
           >
             <button
-              onClick={handleReplies}
+              onClick={() => handleReplies(key)}
               style={{
                 backgroundColor: "transparent",
                 border: "none",
@@ -42,23 +66,33 @@ function CommentSection({ info, comments }) {
             >
               Replies
             </button>
+
             <p style={{ textAlign: "right" }}>
               {comment.data?.replies?.data?.children?.length.toString()}
             </p>
-            <button onClick={handleReplyButtonClick}>Reply</button>
+
+            <button onClick={(e) => handleReplyButtonClick(e, comment)}>
+              Reply
+            </button>
           </div>
-          {openReplies && (
-            <div className="comment">
-              {comment.data?.replies?.data?.children.map((reply, key) => (
-                <p key={key}>{reply.data.body}</p>
-              ))}
-            </div>
-          )}
+          {openReplies[key] &&
+            comment.data.replies &&
+            comment.data.replies.data &&
+            comment.data.replies.data.children &&
+            comment.data.replies.data.children.length > 0 && (
+              <div className="comment">
+                {comment.data.replies.data.children.map((reply, replyKey) => (
+                  <p key={replyKey}>{reply.data.body}</p>
+                ))}
+              </div>
+            )}
           {targetElement === comment && (
-            <form>
-              <input />
-              <button type="submit">Submit</button>
-            </form>
+            <div className="reply-box">
+              <form onSubmit={(e) => newComment(e)}>
+                <input onChange={(e) => commentValueChange(e)} type="text" value={newCommentValue} />
+                <button type="submit">Submit</button>
+              </form>
+            </div>
           )}
         </div>
       ))}
