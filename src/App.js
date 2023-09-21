@@ -22,7 +22,7 @@ function App() {
   const selected = useSelector((state) => state.selected); // Get the 'selected' from Redux store
   const selectedId = useSelector((state) => state.selectedId); //Get selected id from store
   const comments = useSelector((state) => state.comments);
-  const userComment = useSelector((state) => state.userComment);
+  const { userComment } = useSelector((state) => state.comments);
   const queryValueSlice = useSelector((state) => state.queryValue);
 
   useEffect(() => {
@@ -56,10 +56,10 @@ function App() {
     e.preventDefault();
     dispatch(addComment(e.target.value));
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+    
     // Create a new comment object to simulate the added comment
     const newComment = {
       data: {
@@ -69,9 +69,10 @@ function App() {
         replies: { data: { children: [] } }, // Initialize empty replies
       },
     };
-  
+    
     // Update the 'popular' state with the new comment
     dispatch(createComment(newComment)); // Dispatch the createComment action
+    alert(userComment);
   
     // Clear the input field
     dispatch(addComment(""));
