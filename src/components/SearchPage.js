@@ -1,8 +1,8 @@
-import React from "react";
+import React, {useEffect} from 'react';
 import { Link } from "react-router-dom";
-import styles from "../styles/search-page.modules.css";
+import "../styles/search-page.modules.css";
 
-export default function SearchPage({ popular,  handleSelectionChange }) {
+export default function SearchPage({ popular, handleSelectionChange }) {
 
   return (
     <div>
@@ -21,15 +21,21 @@ export default function SearchPage({ popular,  handleSelectionChange }) {
       {/* Popular Reddit Topics listed below */}
       <div className="topics">
         {/* Maps through popular topics from props */}
-        {popular.map((topic, key) => {
-          return (
-            <div key={key} className="topic-card">
-              <Link to={`/r/${topic.data.subreddit}/${topic.data.title}`}>
-                <h3 onClick={() => handleSelectionChange(topic.data.id)} id={topic.data.id}>{topic.data.title}</h3>
-              </Link>
-            </div>
-          );
-        })}
+        {Object.values(popular).map((topic, key) => {
+              return (
+                <div key={key} className="topic-card">
+                  <Link to={`/r/${topic.data.subreddit}/${topic.data.title}`}>
+                    <h3
+                      onClick={() => handleSelectionChange(topic.data.id)}
+                      id={topic.data.id}
+                    >
+                      {topic.data.title}
+                    </h3>
+                  </Link>
+                </div>
+              );
+            })
+            }
       </div>
     </div>
   );

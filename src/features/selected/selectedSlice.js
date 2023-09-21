@@ -1,19 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    selectedId: null
+    selected: null
 }
 
 export const selectedSlice = createSlice({
     name: 'selected',
     initialState,
     reducers: {
-        setSelectedId: (state, action) => {
-            state.selectedId = action.payload;
+        setSelected: (state, action) => {
+            console.log(action.payload);
+            state.selected = action.payload;
         }
     }
 })
 
-export const { setSelectedId } = selectedSlice.actions;
+export const { setSelected } = selectedSlice.actions;
 
 export default selectedSlice.reducer;

@@ -1,59 +1,58 @@
 import "./App.css";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { fetchPopularContents } from "./data/popularContents";
-import { fetchComments } from './data/fetchComments';
+import {
+  fetchPopularData,
+  createComment,
+} from "./features/data/dataSlice";
+import { setSelected } from "./features/selected/selectedSlice";
+import { setSelectedId } from "./features/selectedId/selectedIdSlice";
+import { selectedComments, addComment } from "./features/comments/commentsSlice";
+import { fetchComments } from "./data/fetchComments";
 import SearchPage from "./components/SearchPage";
 import Item from "./components/Item";
-// import CommentSection from "./components/CommentSection";
+import { store } from "./store/store";
 
 function App() {
-  const [popular, setPopular] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
-  const [selectedInfo, setSelectedInfo] = useState(null);
-  const [selectedComments, setSelectedComments] = useState(null);
-  const [userComment, setUserComment] = useState("");
+  const dispatch = useDispatch(); // Get the dispatch function from Redux
+  const popular = useSelector((state) => state.data); // Get the 'popular' data from Redux store
+  const selected = useSelector((state) => state.selected); // Get the 'selected' from Redux store
+  const selectedId = useSelector((state) => state.selectedId); //Get selected id from store
+  const comments = useSelector((state) => state.comments);
+  const userComment = useSelector((state) => state.userComment); 
 
   useEffect(() => {
-    try{
-      fetchPopularContents().then((data) => {
-        setPopular(data);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+    dispatch(fetchPopularData());
+    // Dispatch the action to fetch popular data when the component mounts
+  },[]);
 
-  useEffect(() => {
-    const getComments = async () => {
-      if(selectedId)
-      {
-        const comments = await fetchComments(selectedId, selectedInfo.data.subreddit);
-        setSelectedComments(comments);
-      } else {
-        return;
-      }
-    }
-    getComments();
-  },[selectedId])
+  console.log(selected);
+  console.log(selectedId);
 
-  const handleSelectionChange = (id) => {
-    setSelectedId(id);
-    setSelectedInfo(popular.find((topic) => topic.data.id === id));
-    console.log(selectedId);
+  const handleSelectionChange = async (id) => {
+    const selection = Object.values(popular.popular).find((topic) => topic.data.id === id);
+    dispatch(setSelectedId(selection.data.id));
+    dispatch(setSelected(selection));
+    await fetchInfo(selection.data.id, selection.data.subreddit);
+    // setSelectedInfo(Object.keys(popular).find((topic) => topic.data.id === id));
+    console.log(selected);
   };
-
-  const fetchInfo = () => {
-    setSelectedInfo(popular.find((topic) => topic.data.id === selectedId));
-    console.log(selectedInfo);
+  
+  const fetchInfo = async (id, subred) => {
+    const comments = await fetchComments(id, subred);
+    dispatch(selectedComments(comments)); // Dispatch the setSelected action
+    console.log(comments);
   };
 
   const commentValueChange = (e) => {
     e.preventDefault();
-    setUserComment(e.target.value);
-  }
+    console.log(e.target.value);
+    dispatch(addComment(e.target.value));
+    console.log(userComment);
+  };
 
-  const handleSubmit = (e, comment) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
   
     // Create a new comment object to simulate the added comment
@@ -67,52 +66,42 @@ function App() {
     };
   
     // Update the 'popular' state with the new comment
-    setPopular((prevPopular) => {
-      const updatedPopular = [...prevPopular];
-      const commentIndex = updatedPopular.findIndex((c) => c.data.id === comment.data.id);
-      if (commentIndex !== -1) {
-        // Add the new comment to the replies of the parent comment
-        updatedPopular[commentIndex].data.replies.data.children.push(userComment);
-      }
-      return updatedPopular;
-    });
+    dispatch(createComment(newComment)); // Dispatch the createComment action
   
     // Clear the input field
-    setUserComment("");
+    dispatch(addComment(""));
   };
-  
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <SearchPage
-              popular={popular}
-              handleSelectionChange={handleSelectionChange}
-            />
-          }
-        />
-        <Route
-          path="r/:subreddit/:title"
-          element={
-            <Item
-              selected={selectedId}
-              info={selectedInfo}
-              fetchInfo={fetchInfo}
-              popular={popular}
-              handleSelectionChange={handleSelectionChange}
-              comments={selectedComments}
-              handleSubmit={handleSubmit}
-              userCommentValue={userComment}
-              commentValueChange={commentValueChange}
-            />
-          }
-        >
-        </Route>
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <SearchPage
+                popular={popular.popular}
+                handleSelectionChange={handleSelectionChange}
+              />
+            }
+          />
+          <Route
+            path="r/:subreddit/:title"
+            element={
+              <Item
+                selected={selected.selected}
+                selectedId={selectedId}
+                fetchInfo={fetchInfo}
+                popular={popular.popular}
+                comments={comments.comments}
+                handleSelectionChange={handleSelectionChange}
+                userComment={userComment}
+                handleSubmit={handleSubmit}
+                commentValueChange={commentValueChange}
+              />
+            }
+          ></Route>
+        </Routes>
+      </BrowserRouter>
   );
 }
 
