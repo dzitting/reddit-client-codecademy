@@ -4,7 +4,7 @@ import { useParams, Link, Outlet } from "react-router-dom";
 import CommentSection from "./CommentSection";
 import styles from "../styles/item.modules.css";
 
-function Item({ selected, popular, selectedId, comments, handleSelectionChange, handleSubmit, userComment, commentValueChange }) {
+function Item({ selected, popular, upvote, comments, handleSelectionChange, handleSubmit, userComment, commentValueChange, share }) {
   const { title } = useParams();
   const { subreddit } = useParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -51,11 +51,11 @@ function Item({ selected, popular, selectedId, comments, handleSelectionChange, 
           <img src={selected?.data?.thumbnail} alt="" />
           <p>{selected?.data?.selftext || ""}</p>
           <div style={{ display: "flex" }}>
-            <button>Like</button>
+            <button id={selected?.data?.id} onClick={upvote}>Like</button>
             <p>{selected?.data?.ups}</p>
             <button onClick={showComments}>Comments</button>
             <p>{selected?.data?.num_comments}</p>
-            <button>Share</button>
+            <button onClick={share}>Share</button>
           </div>
           {showingComments && (
             <div>

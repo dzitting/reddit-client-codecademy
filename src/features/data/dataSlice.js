@@ -27,6 +27,9 @@ const dataSlice = createSlice({
   reducers: {
     createComment: (state, action) => {
       state.popular.push(action.payload);
+    },
+    addLike: (state, action) => {
+      state.likes += action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -37,5 +40,5 @@ const dataSlice = createSlice({
 });
 
 // Export your actions and reducer
-export const { createComment, setSelected } = dataSlice.actions;
+export const { createComment, setSelected, addLike } = dataSlice.actions;
 export default dataSlice.reducer;

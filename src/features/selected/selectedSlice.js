@@ -11,10 +11,13 @@ export const selectedSlice = createSlice({
         setSelected: (state, action) => {
             console.log(action.payload);
             state.selected = action.payload;
+        },
+        upvote: (state, action) => {
+            state.ups += action.payload;
         }
     }
 })
 
-export const { setSelected } = selectedSlice.actions;
+export const { setSelected, upvote } = selectedSlice.actions;
 
 export default selectedSlice.reducer;

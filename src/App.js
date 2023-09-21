@@ -5,8 +5,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import {
   fetchPopularData,
   createComment,
+  addLike
 } from "./features/data/dataSlice";
-import { setSelected } from "./features/selected/selectedSlice";
+import { setSelected, upvote } from "./features/selected/selectedSlice";
 import { setSelectedId } from "./features/selectedId/selectedIdSlice";
 import { selectedComments, addComment } from "./features/comments/commentsSlice";
 import { setQueryValue } from "./features/queryValue/queryValueSlice";
@@ -24,6 +25,7 @@ function App() {
   const comments = useSelector((state) => state.comments);
   const { userComment } = useSelector((state) => state.comments);
   const queryValueSlice = useSelector((state) => state.queryValue);
+  const likesSlice = useSelector((state) => state.likes);
 
   useEffect(() => {
     dispatch(fetchPopularData());
@@ -73,10 +75,23 @@ function App() {
     // Update the 'popular' state with the new comment
     dispatch(createComment(newComment)); // Dispatch the createComment action
     alert(userComment);
+    console.log(comments);
   
     // Clear the input field
     dispatch(addComment(""));
   };
+
+  const handleLike = (e) => {
+    e.preventDefault();
+    const post = popular.popular.find((topic) => topic.data.id === e.target.id);
+    dispatch(upvote(1));
+    
+  }
+
+  const share = () => {
+    const currentUrl = window.location.href;
+    alert(`Share using this link: ${currentUrl}`);
+  }
 
   return (
       <BrowserRouter>
@@ -97,6 +112,8 @@ function App() {
             path="r/:subreddit/:title"
             element={
               <Item
+              share={share}
+              upvote={handleLike}
                 selected={selected.selected}
                 selectedId={selectedId}
                 fetchInfo={fetchInfo}
