@@ -16,9 +16,6 @@ function Item({ selected, popular, selectedId, comments, handleSelectionChange, 
   const showComments = () => {
     setShowingComments(!showingComments);
   };
-  console.log(popular);
-  // const selectedInfo = Object.values(popular).find((topic) => topic.data.id === selectedId);
-  // console.log(selectedInfo);
 
   return (
     <>

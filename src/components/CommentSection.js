@@ -8,7 +8,9 @@ function CommentSection({
   newCommentValue,
   commentValueChange,
 }) {
-  const [openReplies, setOpenReplies] = useState(Array(comments.length).fill(false));
+  const [openReplies, setOpenReplies] = useState(
+    Array(comments.length).fill(false)
+  );
   const [targetElement, setTargetElement] = useState(null);
   const [typing, setTyping] = useState("");
 
@@ -62,16 +64,22 @@ function CommentSection({
                 Reply
               </button>
             </div>
-            {openReplies[key] && comment.data?.replies?.data?.children?.length > 0 && (
-              <div className="comment">
-                {comment.data.replies.data.children.map((reply, replyKey) => (
-                  <p key={replyKey}>{reply.data.body}</p>
-                ))}
-              </div>
-            )}
+            {openReplies[key] &&
+              comment.data?.replies?.data?.children?.length > 0 && (
+                <div className="comment">
+                  {comment.data.replies.data.children.map((reply, replyKey) => (
+                    <p key={replyKey}>{reply.data.body}</p>
+                  ))}
+                </div>
+              )}
             {targetElement === comment && (
               <div className="reply-box">
-                <form onSubmit={(e) => newComment(e)}>
+                <form
+                  onSubmit={(e) => {
+                    newComment(e);
+                    setTargetElement(null);
+                  }}
+                >
                   <input
                     onChange={(e) => commentValueChange(e)}
                     type="text"

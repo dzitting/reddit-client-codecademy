@@ -9,7 +9,9 @@ import {
 import { setSelected } from "./features/selected/selectedSlice";
 import { setSelectedId } from "./features/selectedId/selectedIdSlice";
 import { selectedComments, addComment } from "./features/comments/commentsSlice";
+import { setQueryValue } from "./features/queryValue/queryValueSlice";
 import { fetchComments } from "./data/fetchComments";
+import { handleSearch } from "./data/handleSearch";
 import SearchPage from "./components/SearchPage";
 import Item from "./components/Item";
 import { store } from "./store/store";
@@ -20,15 +22,22 @@ function App() {
   const selected = useSelector((state) => state.selected); // Get the 'selected' from Redux store
   const selectedId = useSelector((state) => state.selectedId); //Get selected id from store
   const comments = useSelector((state) => state.comments);
-  const userComment = useSelector((state) => state.userComment); 
+  const userComment = useSelector((state) => state.userComment);
+  const queryValueSlice = useSelector((state) => state.queryValue);
 
   useEffect(() => {
     dispatch(fetchPopularData());
     // Dispatch the action to fetch popular data when the component mounts
   },[]);
 
-  console.log(selected);
-  console.log(selectedId);
+  const handleQueryChange = (e) => {
+    e.preventDefault();
+    dispatch(setQueryValue(e.target.value));
+  }
+  const handleQuerySubmit = (e) => {
+    e.preventDefault();
+    handleSearch(queryValueSlice.queryValue);
+  }
 
   const handleSelectionChange = async (id) => {
     const selection = Object.values(popular.popular).find((topic) => topic.data.id === id);
@@ -36,20 +45,16 @@ function App() {
     dispatch(setSelected(selection));
     await fetchInfo(selection.data.id, selection.data.subreddit);
     // setSelectedInfo(Object.keys(popular).find((topic) => topic.data.id === id));
-    console.log(selected);
   };
   
   const fetchInfo = async (id, subred) => {
     const comments = await fetchComments(id, subred);
     dispatch(selectedComments(comments)); // Dispatch the setSelected action
-    console.log(comments);
   };
 
   const commentValueChange = (e) => {
     e.preventDefault();
-    console.log(e.target.value);
     dispatch(addComment(e.target.value));
-    console.log(userComment);
   };
 
   const handleSubmit = (e) => {
@@ -81,6 +86,9 @@ function App() {
               <SearchPage
                 popular={popular.popular}
                 handleSelectionChange={handleSelectionChange}
+                queryValue={queryValueSlice.queryValue}
+                handleQueryChange={handleQueryChange}
+                submit={handleQuerySubmit}
               />
             }
           />
