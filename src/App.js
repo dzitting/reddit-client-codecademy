@@ -64,23 +64,7 @@ function App() {
         id: "unique-comment-id", // Generate a unique comment ID
         replies: { data: { children: [] } }, // Initialize empty replies
       },
-    };
-  
-    // Update the 'popular' state with the new comment
-    setPopular((prevPopular) => {
-      const updatedPopular = [...prevPopular];
-      const commentIndex = updatedPopular.findIndex((c) => c.data.id === comment.data.id);
-      if (commentIndex !== -1) {
-        // Add the new comment to the replies of the parent comment
-        updatedPopular[commentIndex].data.replies.data.children.push(userComment);
-      }
-      return updatedPopular;
-    });
-  
-    // Clear the input field
-    setUserComment("");
-  };
-  
+    };  
 
   return (
     <BrowserRouter>
