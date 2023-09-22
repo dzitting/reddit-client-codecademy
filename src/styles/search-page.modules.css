@@ -1,4 +1,7 @@
-
+.popular {
+    width: 100vw;
+    background-color: purple;
+}
 .topics {
     width: 100vw;
     height: 60vh;
